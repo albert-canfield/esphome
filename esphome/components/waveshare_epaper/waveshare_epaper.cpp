@@ -3474,14 +3474,17 @@ void HOT WaveshareEPaper7P5InBV3BWR::display() {
 
   this->command(0x10);  // Send BW data Transmission
   delay(2);
+  // Each byte is its own SPI transaction, so a full frame takes a while: keep the watchdog fed.
   for (uint32_t i = 0; i < buf_len; i++) {
     this->data(this->buffer_[i]);
+    App.feed_wdt();
   }
 
   this->command(0x13);  // Send red data Transmission
   delay(2);
   for (uint32_t i = 0; i < buf_len; i++) {
     this->data(this->buffer_[i + buf_len]);
+    App.feed_wdt();
   }
 
   this->command(0x12);  // Display Refresh
